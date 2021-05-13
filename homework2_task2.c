@@ -154,10 +154,8 @@ unsigned short is_network_valid(const struct Network *n){
 }
 
 struct Line{
-    char type;
-    unsigned short line_nb;
-    int station_number;
-    int list_line_nb;
+    int id_line;
+    int station_number; 
     int sum;
     float cost;};
 
@@ -187,6 +185,31 @@ int total_lines(struct Network *n) {
     return Total_lines;
 }
 
+void sort_Network(struct Line* list_line, struct Network *n, int Total_lines) { // la fonction remplie la structure de chaque ligne
+    //struct Line list_line[Total_lines]; //les lignes sont stockées dans une liste
+
+    for (int i=0; i<Total_lines; i++) {
+        list_line[i].id_line=-1;
+    }
+    
+    for (int i=0; i<n->Network_size; i++){
+        int id_line = n->stations[i].line_nb;
+        if (n->stations[i].type=='m') id_line+=99;
+        
+        for (int j=0; j<Total_lines; j++) {
+            if (list_line[j].id_line==-1) {
+                    list_line[j].id_line = id_line;
+            }
+            
+            if (list_line[j].id_line==id_line){ 
+                list_line[j].station_number++;
+                for (int k=0; k<n->Network_size; k++) {
+                    if (n->adj_matrix[i][k]!=INT_MAX) list_line[j].cost+= n->adj_matrix[i][k];
+                }
+            }
+        }
+    }
+}
 // int station_number_per_line(struct Network *n,struct Line *l){
 //     for (int j=0;j<Total_lines;j++){ //compte le nombre de stations par ligne
 //         l->station_number=0;
@@ -195,6 +218,7 @@ int total_lines(struct Network *n) {
 //                 l->station_number+=1;
 //             }
 //         }
+//         printf("")
 //         return l->station_number;
 //     }
 
@@ -205,5 +229,13 @@ int total_lines(struct Network *n) {
 int main (){
     struct Network Network1=build_small_network();
     printf("%d\n", total_lines(&Network1));
+    int total_lines = 3;
+    struct Line list_line[total_lines];
+
+    sort_Network(list_line, &Network1, total_lines);
+
+    for(int i =0; i<total_lines;i++) {
+        printf("Line: line_nb=%d and cost=%f\n", i, list_line[i].cost);
+    }
     return 0;
 }
