@@ -73,8 +73,8 @@ struct Network build_small_network(){
     Figure_1.stations[11].id=132;
     Figure_1.stations[11].line_nb=42;
 
-    for(int i=0;i<12;i++){
-        for(int j=0;j<12;j++){
+    for(int i=0;i<Figure_1.Network_size;i++){
+        for(int j=0;j<Figure_1.Network_size;j++){
             Figure_1.adj_matrix[i][j]=INT_MAX;
         }
     }
@@ -159,47 +159,51 @@ struct Line{
     int station_number;
     int list_line_nb;
     int sum;
-    float cost;}
+    float cost;};
 
 
-struct Line *l total_lines(struc Network *n) {
+int total_lines(struct Network *n) {
     int Total_lines=0;
     int list_line_nb [MAX_LINE];
-    for (int i=0, i<MAX_LINE, i++) {
+    for (int i=0; i<MAX_LINE; i++) {
         list_line_nb[i]=-1;
     }
-    for (int i=0; i<n->Network_size-1; i++) { //list_line est la liste contenant tous les id_line, faisant la distinction entre les bus et les métros en ajoutant 99
+    for (int i=0; i<n->Network_size; i++) { //list_line est la liste contenant tous les id_line, faisant la distinction entre les bus et les métros en ajoutant 99
         int id_line = n->stations[i].line_nb;
-        if (n->station[i].type=="m") id_line+=99;
+        if (n->stations[i].type=='m') id_line+=99;
 
-        for (int j=0, j<MAX_LINE, j++) {
+        for (int j=0; j<MAX_LINE; j++) {
 
             if (list_line_nb[j]==id_line) break;
 
             if (list_line_nb[j]==-1) {
                 list_line_nb[j] = id_line;
+
                 Total_lines++;
                 break;
             }
         }
     }
+    return Total_lines;
 }
 
-int station_number_per_line(struct Network *n,struct Line *l){
-    for (int j=0;j<Total_lines;j++){ //compte le nombre de stations par ligne
-        l->station_number=0;
-        for (int i=0;i<n->Network_size;i++){
-            if((n->stations[i].type==l->type)&&(n->stations[i].id==l->line_nb))
-                l->station_number+=1;
-            }
-        }
-        return l->station_number;
-    }
+// int station_number_per_line(struct Network *n,struct Line *l){
+//     for (int j=0;j<Total_lines;j++){ //compte le nombre de stations par ligne
+//         l->station_number=0;
+//         for (int i=0;i<n->Network_size;i++){
+//             if((n->stations[i].type==l->type)&&(n->stations[i].id==l->line_nb))
+//                 l->station_number+=1;
+//             }
+//         }
+//         return l->station_number;
+//     }
 
-int Calculate_Sum(struct Line *l, struct Network *n){
+// int Calculate_Sum(struct Line *l, struct Network *n){
     
-}
+// }
 
 int main (){
+    struct Network Network1=build_small_network();
+    printf("%d\n", total_lines(&Network1));
     return 0;
 }
